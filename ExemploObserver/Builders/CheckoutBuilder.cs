@@ -1,4 +1,5 @@
 ﻿using BuilderExample.Entities;
+using ExemploObserver.Observers.CheckoutObservers;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,10 @@ namespace BuilderExample.Builders
         }
         public Checkout Build()
         {
-            return new Checkout(CheckoutProducts, CheckoutValue(), CheckoutBuyerName, CheckoutBuyerCNPJ, CheckoutTaxes(), Now(), Obs);
+            var checkout = new Checkout(CheckoutProducts, CheckoutValue(), CheckoutBuyerName, CheckoutBuyerCNPJ, CheckoutTaxes(), Now(), Obs);
+            var coac = new SendMailCheckoutObserver(new SendSMSCheckoutObserver());
+            coac.DoAfterCheckoutBuild(checkout);
+            return checkout;
         }
 
         private double CheckoutTaxes()
